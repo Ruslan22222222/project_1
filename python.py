@@ -1,38 +1,50 @@
 import random
-letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+from hangman_words import word_list
+from hangma_art import logo, stages
 
-print("Welcome to the PyPassword Generator!")
-nr_letters = int(input("How many letters would you like in your password?\n")) 
-nr_symbols = int(input(f"How many symbols would you like?\n"))
-nr_numbers = int(input(f"How many numbers would you like?\n"))
+def play_hangman():
+    chosen_word = random.choice(word_list)
+    word_length = len(chosen_word)
 
-def generator_password():
-    password_list = []
+    end_of_game = False
+    lives = 6
 
-    for char in range(1, nr_letters + 1):
-        password_list.append(random.choice(letters))
+    print(logo)
+    print(f"psss {chosen_word}")
 
-    for char in range(1, nr_numbers + 1):
-        password_list.append(random.choice(numbers))
+    display = []
+    for _ in range(word_length):
+        display += "_"
 
-    for char in range(1, nr_symbols + 1):
-        password_list.append(random.choice(symbols))
+    while not end_of_game:
+        guess = input("Выбирай букву! ").lower()
+        if guess in display:
+            print(f"Ты выбирал уже эту {guess}, пробуй другую ")
 
-    random.shuffle(password_list)
+        for position in range(word_length):
+            letter = chosen_word[position]
+            if letter == guess:
+                display[position] = letter
 
-    password = ""
-    for char in password_list:
-        password += char
+        if guess not in chosen_word:
+            print(f"Ты выбрал {guess}, такой буквы нет в слове, ты потерял 1 жизнь! 😜️️️️️️")
+            lives -= 1
+            if lives == 0:
+                end_of_game = True
+                print("Ты проиграл 😭️️️️️️")
 
-    return password
+        if "_" not in display:
+            end_of_game = True
+            print("Ты выиграл 😎️️️️️️")
 
-while True:
-    current_password = generator_password()
-    print(f"Your password is {current_password}")
-
-    new_password = input("Woud u like to generate new password type (y/n)")
-    if new_password.lower() != "y":
-        break
-
+        print(" ".join(display))
+        print(stages[lives])
+    
+    new_game = input("Хотел бы сыграть ешё раз? (да/нет) 🎯️️️️️️ ").lower()
+    if new_game == "да":
+        play_hangman()
+    else:
+        print("Спасибо за игру 😉️️️️️️")
+    
+if __name__ == "__main__":
+    play_hangman()
